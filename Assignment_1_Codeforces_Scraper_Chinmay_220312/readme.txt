@@ -1,4 +1,3 @@
-This is the folder structure of the scraper implemented using bs4, it is designed to repeatedly ask for codeforces URLs to be extracted.
 ├── problems&editorials_scraper.py                  # Python script for scraping
 ├── debug_page_source.html      # Debug file to save page source for troubleshooting
 ├── problems/                   # Directory to store scraped problems
