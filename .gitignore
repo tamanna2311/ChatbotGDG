@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Mac
+.DS_Store
+
+# Virtual Environments
+venv/
+env/
+.env
+
+# Data and Models
+data/raw/*.json
+data/processed/*.db
+data/processed/*.pkl
+data/cache/
