@@ -14,12 +14,27 @@ Outputs: JSON Responses.
 Role in pipeline: The Web Interface.
 """
 
-from fastapi import FastAPI, HTTPException
-from typing import List
-import os
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import os              # Standard library to safely handle file paths across operating systems.
+from typing import List # Type hinting for Python dictionaries and arrays.
 
+# ==========================================
+# EXTERNAL LIBRARIES (Installed via pip)
+# ==========================================
+from fastapi import FastAPI, HTTPException # The Web Framework logic, and a helper to return clean HTTP 500/404 errors.
+
+# ==========================================
+# OUR CUSTOM PROJECT FILES (Modules we wrote)
+# ==========================================
+# api.schemas: We import the Strict Pydantic validators we defined so external users can't crash the server with bad JSON.
 from api.schemas import ChatRequest, ChatResponse, RecommendationRequest, ProblemSchema
+
+# src.recommender: We import our massive mathematical matrices.
 from src.recommender import Recommender
+
+# src.rag_pipeline: We import the logic loop that connects user input to the Recommender and Summarization tool.
 from src.rag_pipeline import RAGPipeline
 
 app = FastAPI(

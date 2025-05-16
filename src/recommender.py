@@ -13,13 +13,24 @@ Outputs: A list of dictionaries representing recommended problems.
 Role in pipeline: This is the primary feature of our application. 
 """
 
-import os
-import joblib
-import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
-from sentence_transformers import SentenceTransformer
-from typing import List, Dict, Any
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import os                                  # Standard library for resolving computer file paths.
+from typing import List, Dict, Any         # Purely for type hinting our Python code to make reading and debugging easier.
 
+# ==========================================
+# EXTERNAL LIBRARIES (Installed via pip)
+# ==========================================
+import pandas as pd                        # Data science library used to efficiently hold our problem database in RAM.
+import joblib                              # Used to instantly load our massively pre-calculated mathematical .pkl files from disk.
+from sklearn.metrics.pairwise import cosine_similarity # The core math calculation that measures the distance/angle between two mathematical Vectors.
+from sentence_transformers import SentenceTransformer  # Used here to encode the LIVE user query into a vector so we can measure it.
+
+# ==========================================
+# OUR CUSTOM PROJECT FILES (Modules we wrote)
+# ==========================================
+# src.config: Our central authority for paths and model names.
 from src.config import PROCESSED_DATA_DIR, EMBEDDING_MODEL_NAME
 
 class Recommender:

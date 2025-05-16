@@ -16,7 +16,10 @@ Template-Based Hint System. It looks at the tags and difficulty and selects appr
 teaching strategies.
 """
 
-import random
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import random # Standard library used here to pick a random hint from our template arrays, adding variety to the bot.
 
 def generate_hint(tags: str, difficulty: int = None, problem_name: str = "This problem") -> str:
     """

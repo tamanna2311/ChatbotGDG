@@ -14,8 +14,16 @@ Outputs: A generated string response.
 Role in pipeline: The "Brain" of the chatbot.
 """
 
+# ==========================================
+# OUR CUSTOM PROJECT FILES (Modules we wrote)
+# ==========================================
+# src.recommender: We import our mathematical search engine logic to handle the "Retrieval" (R) step of RAG.
 from src.recommender import Recommender
+
+# src.hint_engine: We import our logic rule system that handles safe, non-spoiling hint "Generation" (G/Augmentation).
 from src.hint_engine import generate_hint
+
+# src.summarizer: We import our automated template generator that builds Editorial summaries.
 from src.summarizer import generate_summary
 
 class RAGPipeline:

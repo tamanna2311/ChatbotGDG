@@ -21,12 +21,26 @@ We use two different approaches to indexing, to demonstrate breadth of knowledge
    We explicitly state in our README that this is a lightweight substitute for a massive CodeBERT model.
 """
 
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import os      # Standard library to safely handle file saving paths across different operating systems.
+
+# ==========================================
+# EXTERNAL LIBRARIES (Installed via pip)
+# ==========================================
+from sklearn.feature_extraction.text import TfidfVectorizer # A mathematical library used to count word frequencies and find obvious keyword matches.
+from sentence_transformers import SentenceTransformer       # A deep-learning library used here as our 'CodeBERT stand-in' to understand semantic meaning (context).
+import joblib                                               # A utility library used to save our heavy mathematical matrices directly to the hard drive as .pkl files.
+
+# ==========================================
+# OUR CUSTOM PROJECT FILES (Modules we wrote)
+# ==========================================
+# src.database: We import our data access helper to retrieve all currently cleaned problems.
 from src.database import get_all_problems_as_dataframe
+
+# src.config: We pull configuration rules for where to save the files and which Transformer to use.
 from src.config import EMBEDDING_MODEL_NAME, PROCESSED_DATA_DIR
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sentence_transformers import SentenceTransformer
-import os
-import joblib
 
 def create_indexes() -> None:
     """

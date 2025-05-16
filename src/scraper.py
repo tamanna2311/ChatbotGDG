@@ -20,11 +20,23 @@ must be used. For simplicity and stability in this student project, we use `requ
 a synthesized "fallback" dataset if parsing fails.
 """
 
-import requests
-from bs4 import BeautifulSoup
-import time
-import json
-import os
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import time    # A standard library used here to purposefully slow down our web scraping requests so we don't accidentally DDoS the server.
+import json    # A standard library to save our downloaded data into raw .json text files.
+import os      # A standard library to handle directory paths properly across Mac, Windows, and Linux.
+
+# ==========================================
+# EXTERNAL LIBRARIES (Installed via pip)
+# ==========================================
+import requests             # The engine that makes HTTP requests to fetch the actual HTML code of website pages.
+from bs4 import BeautifulSoup # The parsing module that sifts through the raw HTML looking for specific tags (like reading a book looking for bold words).
+
+# ==========================================
+# OUR CUSTOM PROJECT FILES (Modules we wrote)
+# ==========================================
+# src.config: We import specific scraping parameters safely from our config file.
 from src.config import MAX_PAGES_TO_SCRAPE, SLEEP_TIME_SEC, RAW_DATA_DIR
 
 def scrape_problems(pages: int = MAX_PAGES_TO_SCRAPE) -> list:

@@ -10,8 +10,16 @@ Outputs: None directly, but it inserts clean rows into the SQLite DB.
 Role in pipeline: Step 3. Data Cleaning and Loading (ETL).
 """
 
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+from typing import List, Dict, Any # Type hinting structures to declare exactly what data types to expect.
+
+# ==========================================
+# OUR CUSTOM PROJECT FILES (Modules we wrote)
+# ==========================================
+# src.database: We import 'insert_problem', our custom helper to safely write logic into the DB.
 from src.database import insert_problem
-from typing import List, Dict, Any
 
 def clean_and_load(raw_data: List[Dict[str, Any]]) -> None:
     """

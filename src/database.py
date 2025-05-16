@@ -10,9 +10,21 @@ Outputs: Varies by function (Insert success, DataFrames).
 Role in pipeline: Central data access layer (DAO / Repository pattern).
 """
 
-import sqlite3
-import pandas as pd
-from typing import List, Dict, Any
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import sqlite3 # The core engine that lets python talk directly to the .db file.
+from typing import List, Dict, Any # Used purely for Type Hinting to make the code easier to read.
+
+# ==========================================
+# EXTERNAL LIBRARIES (Installed via pip)
+# ==========================================
+import pandas as pd # A powerful data manipulation library; used here to convert SQL tables into structured DataFrames.
+
+# ==========================================
+# OUR CUSTOM PROJECT FILES (Modules we wrote)
+# ==========================================
+# src.config: We pull the absolute path of the database so we always connect to the right one.
 from src.config import DB_PATH
 
 def get_connection() -> sqlite3.Connection:

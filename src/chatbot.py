@@ -10,9 +10,19 @@ Outputs: Printed text to standard output (screen).
 Role in pipeline: The User Interface.
 """
 
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import sys # Standard library used here specifically to call sys.exit() if the models fail to load, stopping the program safely.
+
+# ==========================================
+# OUR CUSTOM PROJECT FILES (Modules we wrote)
+# ==========================================
+# src.rag_pipeline: We import the 'Brain' of our system that connects queries to the Recommender and Hint engines.
 from src.rag_pipeline import RAGPipeline
+
+# src.recommender: We import the mathematical Search Engine. We initialize it here so the ML models load into RAM.
 from src.recommender import Recommender
-import sys
 
 def start_chat():
     """

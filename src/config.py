@@ -10,7 +10,10 @@ Outputs: Configuration variables (constants like DB_PATH).
 Role in pipeline: Acts as the truth source for all file paths and hyper-parameters.
 """
 
-import os
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import os # Standard library used to dynamically figure out folder structures and map absolute file paths.
 
 # 1. Base Directory Calculation
 # __file__ is the current file path (src/config.py). 

@@ -11,8 +11,11 @@ Outputs: A new SQLite database file (.db) with empty tables. If the db already e
 Role in pipeline: Step 1. Prepares the storage layer so incoming scraped data has a place to go.
 """
 
-import sqlite3
-import os
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+import sqlite3 # Standard library for interacting directly with SQLite databases via SQL commands.
+import os      # Standard library used to construct reliable file paths across different operating systems.
 
 def initialize_database(db_path: str, schema_path: str) -> None:
     """

@@ -11,8 +11,15 @@ Outputs: None.
 Role in pipeline: Data validation layer for the API.
 """
 
-from pydantic import BaseModel
-from typing import List, Optional
+# ==========================================
+# BUILT-IN PYTHON LIBRARIES
+# ==========================================
+from typing import List, Optional # Type hinting libraries. Optional means a variable can be None without crashing.
+
+# ==========================================
+# EXTERNAL LIBRARIES (Installed via pip)
+# ==========================================
+from pydantic import BaseModel    # The core engine behind FastAPI validation. It ensures incoming JSON strictly matches our classes.
 
 class ChatRequest(BaseModel):
     """
