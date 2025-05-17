@@ -47,52 +47,88 @@ from src.chatbot import start_chat
 
 def main():
     """
-    Parses command line arguments and runs the appropriate parts of the pipeline.
+    Parses command line arguments and acts as the switchboard directing traffic to the right parts of the project.
+    
+    TUTORIAL EXPLANATION:
+    When you build a software pipeline, you don't want to force the end-user to know exactly which file 
+    to run, or what order to run them in. By writing a 'main()' orchestrator, we give the user a single 
+    command interface. We use `argparse` to create "flags" (like --scrape). If a user types the flag, 
+    we execute that exact block of code.
     """
+    
+    # 1. Setup the Argument Parser
+    # This creates the help menu and tells Python to look out for specific words typed in the terminal.
     parser = argparse.ArgumentParser(description="Codeforces Assistant RAG Pipeline")
     
-    # We add flags so the user can choose what parts of the pipeline to run.
+    # 2. Define our Flags
+    # action='store_true' means if the user types '--scrape', the variable `args.scrape` becomes True. 
+    # If they don't type it, it defaults to False.
     parser.add_argument('--scrape', action='store_true', help="Run the scraper and clean the data to Database.")
     parser.add_argument('--index', action='store_true', help="Rebuild the TF-IDF and Transformer embeddings.")
     parser.add_argument('--chat', action='store_true', help="Start the interactive CLI chatbot.")
     parser.add_argument('--api', action='store_true', help="Start the FastAPI server.")
     
+    # 3. Parse the Flags
+    # This actually reads the terminal input and populates the `args` object.
     args = parser.parse_args()
     
-    # If the user didn't specify any arguments, print help and exit.
+    # 4. Handle Empty Input
+    # If the user just types `python run_pipeline.py` without any flags, we print the instructions and safely exit the script (sys.exit).
     if not (args.scrape or args.index or args.chat or args.api):
         parser.print_help()
-        print("\nTry running: python run_pipeline.py --scrape --index --chat")
+        print("\n[TUTORIAL] Try running: python run_pipeline.py --scrape --index --chat")
         sys.exit(0)
 
-    # Step 1 & 2 & 3: Scrape locally, clean, and insert to Database
+    # ==========================================
+    # PHASE 1: DATA ACQUISITION & CLEANING
+    # ==========================================
+    # Triggered by: python run_pipeline.py --scrape
     if args.scrape:
         print("\n=== Phase 1: Database Setup and Scraping ===")
-        # Always make sure DB is initialized before we insert
+        # Always make sure the directories (like data/processed) exist before we try to create a file inside them.
         os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+        
+        # Initialize empty tables in the SQLite database
         initialize_database(DB_PATH, SCHEMA_PATH)
         
-        # Scrape and load
+        # Fetch the raw HTML strings from Codeforces and extract dicts
         raw_data = scrape_problems()
+        
+        # Clean the messy raw data and insert it securely into SQLite
         clean_and_load(raw_data)
         
-    # Step 4: Indexing
+    # ==========================================
+    # PHASE 2: MATHEMATICAL INDEXING (THE "AI" PART)
+    # ==========================================
+    # Triggered by: python run_pipeline.py --index
     if args.index:
         print("\n=== Phase 2: Building AI Indexes ===")
+        # This function pulls all problems from SQLite, converts their text into math Vectors, 
+        # and saves those vectors as .pkl files to the hard drive so they can be loaded instantly later.
         create_indexes()
         
-    # Step 5A: Launch Chatbot
+    # ==========================================
+    # PHASE 3A: THE COMMAND LINE CHATBOT
+    # ==========================================
+    # Triggered by: python run_pipeline.py --chat
     if args.chat:
         print("\n=== Phase 3: Launching CLI Chatbot ===")
-        # Note: If the DB doesn't exist and indexer hasn't run, this will crash.
-        # That's why the README instructs users to run with --scrape and --index first.
+        # NOTE: If the DB doesn't exist and indexer hasn't run, this will crash.
+        # That's why the README instructs users to run with --scrape and --index FIRST before running --chat.
         start_chat()
         
-    # Step 5B: Launch API
+    # ==========================================
+    # PHASE 3B: THE WEB API
+    # ==========================================
+    # Triggered by: python run_pipeline.py --api
     if args.api:
         print("\n=== Phase 3: Launching API Server ===")
         # uvicorn is the server that natively runs FastAPI applications.
+        # It binds our python logic to network ports so web browsers can communicate with it.
         uvicorn.run("api.main:app", host=API_HOST, port=API_PORT, reload=True)
 
+# STANDARD PYTHON PRACTICE:
+# This ensures that `main()` is only called if we run the script directly from the terminal.
+# If another python file tried to `import run_pipeline`, this block prevents it from accidentally running immediately.
 if __name__ == "__main__":
     main()
