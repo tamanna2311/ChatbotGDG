@@ -36,8 +36,12 @@ from src.config import PROCESSED_DATA_DIR, EMBEDDING_MODEL_NAME
 class Recommender:
     """
     A class to encapsulate our recommendation logic.
-    Why a class? Because we need to load large files from disk (the models and matrices)
-    and we only want to do that ONCE when the app starts, not every single time a user asks a question.
+    
+    [TUTORIAL] WHY A CLASS?
+    If we just used loose functions, Python would have to re-read the massive 80MB files 
+    from the hard drive every time we wanted a recommendation. By tying it to a `class`, 
+    we load the files exactly ONCE during `__init__`, save them inside `self`, and reuse 
+    them instantly for all future questions.
     """
     def __init__(self):
         # Load the dataframe containing all problem metadata
@@ -61,17 +65,17 @@ class Recommender:
 
     def recommend_by_similarity(self, query_text: str, top_k: int = 5, use_transformer: bool = True) -> List[Dict[str, Any]]:
         """
-        Takes a raw text string, converts it to a vector, and finds the closest problems in the database.
+        Takes a raw text string representing what you want to learn, converts it to a mathematical vector, 
+        and finds the closest matching problems in the database.
         
-        What it does:
-        1. Encodes the query (either using TF-IDF or Transformer).
-        2. Computes the Cosine Similarity between the query vector and all problem vectors.
-        3. Sorts the results and picks the top K highest scores.
+        [TUTORIAL] WHAT IT DOES:
+        1. Encodes the query: Turns the English sentence into an array of floats using our Transformer.
+        2. Computes Cosine Similarity: Mathematically calculates the distance between your query and all 15k problems.
+        3. Sorts and slices: Picks the `top_k` problems with the highest similarity percentages.
         
-        Why it exists: This powers both the "search" bar ("I want DP problems about water") 
-        and the semantic retrieval part of our RAG pipeline.
-        
-        What it returns: A list of dicts.
+        [TUTORIAL] WHY IT EXISTS:
+        This is the "Retrieval" (R) step of our RAG pipeline. It handles both direct search bar queries 
+        ("I want DP problems about water") and fetches context for our hint generator.
         """
         if use_transformer:
             # 1. Encode user query into a dense mathematical vector of shape (1, 384)

@@ -18,15 +18,15 @@ a local Llama-3 model.
 
 def generate_summary(problem_name: str, tags: str, statement_summary: str) -> str:
     """
-    Creates a brief "Editorial Style" overview of a problem.
+    Combines problem properties into an "Editorial-style" summary paragraph.
     
-    What it does: 
-    It strings together the problem's title, its algorithmic categorized tags, and 
-    adds standard competitive programming phrasing to simulate an Editorial.
+    [TUTORIAL] WHAT IT DOES:
+    It acts as an automated news reporter. It takes raw metadata (like difficulty 1500, tags [math, greedy]) 
+    and translates them into a single, cohesive, human-readable english paragraph.
     
-    Why it exists: To provide the "Summary" feature requested in the resume project requirements.
-    
-    What it returns: A formatted string summarizing the problem.
+    [TUTORIAL] WHY IT EXISTS:
+    Humans prefer reading paragraphs over looking at JSON dictionaries. This serves as the 
+    'Generation' component of the RAG pipeline when the user asks 'Summarize what 1500A is about.'
     """
     
     tags_display = tags if tags else "General Implementation"

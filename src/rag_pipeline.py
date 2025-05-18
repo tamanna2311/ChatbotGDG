@@ -29,8 +29,10 @@ from src.summarizer import generate_summary
 class RAGPipeline:
     def __init__(self, recommender: Recommender):
         """
-        We pass the Recommender in rather than instantiating it here so we don't 
-        accidentally load the 80MB models multiple times in memory.
+        [TUTORIAL] DEPENDENCY INJECTION:
+        We pass the Recommender in rather than instantiating it here. 
+        Why? Because `Recommender()` loads 80 Megabytes of matrix data into RAM. 
+        If we instantiated it here, every time we made a new pipeline we would crash the computer's memory!
         """
         self.recommender = recommender
         self.df = self.recommender.df
@@ -56,14 +58,20 @@ class RAGPipeline:
 
     def process_query(self, query: str) -> str:
         """
-        The main handler for user string queries.
+        The main handler for user string queries (e.g., when the user hits Enter).
         
-        What it does:
-        1. Parses the intent of the user (e.g., are they asking for a summary, a hint, or similar problems?).
-        2. RETRIEVAL STEP: Fetches the requested problem or similar problems from the Recommender.
-        3. GENERATION STEP: Passes that retrieved data into the HintEngine or Summarizer.
+        [TUTORIAL] RAG ARCHITECTURE EXPLAINED:
+        RAG = Retrieval + Augmented Generation.
         
-        Why it exists: To provide a single, clean API for the frontend/chatbot.
+        1. INTENT PARSING: We read the user's string to figure out what they want (Hint, Summary, Search).
+        2. RETRIEVAL STEP: If they ask for '1500A', we look up the exact text of 1500A from the DataFrame. 
+           If they ask for 'greedy problems', we use `self.recommender` (transformer math) to fetch similar data.
+        3. GENERATION STEP: We pass the retrieved context directly into `generate_hint()` or `generate_summary()`.
+        
+        [TUTORIAL] WHY RAG?
+        If you just ask ChatGPT for a Codeforces hint, it might hallucinate a fake problem. 
+        Because we RETRIEVE the real Codeforces tags and pass them into the GENERATOR, our bot 
+        can never hallucinate fake properties about the problem.
         """
         q_lower = query.lower()
         

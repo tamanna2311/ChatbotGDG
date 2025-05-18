@@ -52,8 +52,13 @@ RAG = None
 @app.on_event("startup")
 async def startup_event():
     """
-    Runs automatically when the FastAPI server starts.
-    We load the machine learning models here so they are ready in memory.
+    [TUTORIAL] WHAT IT DOES:
+    This block of code runs ONE TIME right when you type `uvicorn api.main:app` or `python run_pipeline.py --api`.
+    
+    [TUTORIAL] WHY IT EXISTS:
+    We must load the `Recommender` (which reads 80MB of matrices from the hard drive into RAM) right at the start. 
+    If we loaded the Recommender inside one of the routes (like `/chat`), your API would hang for 3 seconds EVERY time 
+    a user sent a message! By doing it on "startup", the API routes become lightning fast (0.01 seconds).
     """
     global RECOMMENDER, RAG
     print("API Starting up... Loading models.")
@@ -74,8 +79,14 @@ def read_root():
 @app.post("/chat", response_model=ChatResponse)
 def handle_chat(request: ChatRequest):
     """
-    The main RAG Chat endpoint. Pass in a string, get a string back.
-    Example body: {"query": "Summarize 1500A"}
+    The main Chat endpoint.
+    
+    [TUTORIAL] HOW IT WORKS:
+    1. A frontend application sends an HTTP POST request to `http://localhost:8000/chat`.
+    2. Inside the request is a JSON Body: `{"query": "Summarize 1500A"}`.
+    3. `request: ChatRequest` automatically validates that JSON using Pydantic.
+    4. We pass `request.query` to our Python RAG engine.
+    5. We wrap the generated string back into a Pydantic `ChatResponse` and return it as JSON to the frontend.
     """
     if RAG is None:
         raise HTTPException(status_code=500, detail="Models are not loaded.")
@@ -89,8 +100,12 @@ def handle_chat(request: ChatRequest):
 @app.post("/recommend", response_model=List[ProblemSchema])
 def get_recommendations(request: RecommendationRequest):
     """
-    A more traditional endpoint. Pass in a string, get a JSON array of problem objects in return.
-    Useful for populating a strict UI structure rather than a chat window.
+    A standalone Retrieval endpoint.
+    
+    [TUTORIAL] WHY HAVE TWO ENDPOINTS?
+    While `/chat` is an all-in-one "Brain" that returns English paragraphs, sometimes a frontend developer 
+    just wants to build a standard "Search Results" page. This endpoint skips the Generative (G) step of RAG 
+    and just returns a clean JSON array of the top K closest problem arrays.
     """
     if RECOMMENDER is None:
         raise HTTPException(status_code=500, detail="Models are not loaded.")

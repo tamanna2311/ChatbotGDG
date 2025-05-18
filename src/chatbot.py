@@ -26,15 +26,18 @@ from src.recommender import Recommender
 
 def start_chat():
     """
-    Initializes the models and starts an infinite loop to accept user text.
+    Initializes the models and runs an infinite loop asking the user for input.
     
-    What it does:
-    1. Loads the Recommender (which takes a few seconds to load the matrices).
-    2. Instantiates the RAG Pipeline.
-    3. Prints a welcome message.
-    4. Loops continuously, passing user input to `rag.process_query()`.
-    
-    Why it exists: To provide an interactive experience simulating the "Chatbot" requirement.
+    [TUTORIAL] WHAT IT DOES:
+    This is entirely a "frontend" file. 
+    1. It boots up the `Recommender` (which loads the math arrays from disk).
+    2. It hands that recommender over to the `RAGPipeline` (the brain).
+    3. It starts a `while True:` loop inside your terminal, taking your typed input (`input()`)
+       and passing it to the brain.
+       
+    [TUTORIAL] WHY IT EXISTS:
+    Before we build a full React.js website or FastAPI server, we need a way to test that our 
+    Machine Learning logic successfully works locally. A CLI (Command Line Interface) is the easiest way.
     """
     print("Loading AI Models... Please wait (this make take a few seconds).")
     try:

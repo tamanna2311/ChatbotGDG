@@ -24,7 +24,13 @@ from pydantic import BaseModel    # The core engine behind FastAPI validation. I
 class ChatRequest(BaseModel):
     """
     Schema for the main chatbot endpoint.
-    A user will POST a JSON like: {"query": "Give me a hint for 1500A"}
+    
+    [TUTORIAL] WHAT IT DOES:
+    Whenever someone sends data over the internet to our API, we cannot trust them. They might 
+    send an array instead of a string, or an empty JSON. This `Pydantic BaseModel` acts like a 
+    security bouncer. It guarantees that the incoming request MUST be a JSON object containing 
+    exactly one key named "query", and its value MUST be a string. If they send anything else, 
+    FastAPI automatically blocks them with a "422 Unprocessable Entity" error.
     """
     query: str
 

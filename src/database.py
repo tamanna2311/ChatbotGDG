@@ -41,19 +41,15 @@ def insert_problem(problem_data: Dict[str, Any]) -> None:
     """
     Inserts a single clean problem into the database, including its tags.
     
-    What it does:
-    1. Inserts the main problem data into the `problems` table.
-    2. Loops through the tags and inserts them into the `tags` table if they don't exist.
-    3. Links the problem and its tags in the `problem_tags` table.
-    
-    Why it exists: Saving scraped data securely.
-    What inputs it expects: A dictionary containing 'contest_id', 'problem_index', 
-    'name', 'difficulty', 'url', 'statement_summary', and a list of 'tags'.
-    What it returns: None.
-    Where it is used: In cleaner.py/loader.py after raw data is cleaned.
-    
-    Assumptions:
-    - Data is thoroughly cleaned and validated before calling this.
+    [TUTORIAL] WHAT IT DOES:
+    This function acts as our single Gateway into the database. 
+    1. It takes a python Dictionary (representing one problem).
+    2. Uses SQL "INSERT OR IGNORE" so that if we scrape the same problem twice, the pipeline doesn't crash.
+    3. It iterates over the problem's 'tags' (which could be many), inserts them into a `tags` table, 
+       and links them together in a `problem_tags` junction table.
+       
+    [TUTORIAL] CROSS-REFERENCE:
+    This prevents `cleaner.py` from having to write massive SQL strings itself.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -117,13 +113,14 @@ def get_all_problems_as_dataframe() -> pd.DataFrame:
     """
     Retrieves all problems from the database and returns them as a Pandas DataFrame.
     
-    What it does: 
-    It joins the basic problem data with its tags so each row has all info.
-    We return a Pandas DataFrame because it's the standard for Data Science/ML indexing.
+    [TUTORIAL] WHAT IT DOES:
+    SQL is great for storage, but Machine Learning tools (like Scikit-Learn) don't speak SQL. 
+    By returning a `pandas` DataFrame, we load the database into a row/column matrix in RAM that 
+    the AI models can easily process.
     
-    Why it exists: To provide data for our TF-IDF and Embedding models in the Indexer phase.
-    
-    What it returns: A Pandas DataFrame.
+    [TUTORIAL] HOW IT DOES IT:
+    We use advanced SQL (JOIN and GROUP_CONCAT) to take the messy web of problems and tags 
+    and squash them perfectly into a single flat row per problem.
     """
     conn = get_connection()
     # We use a SQL JOIN to combine problems, problem_tags, and tags tables.

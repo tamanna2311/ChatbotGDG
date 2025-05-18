@@ -46,18 +46,17 @@ def create_indexes() -> None:
     """
     Reads all problems, builds TF-IDF and Transformer embeddings, and saves them to disk.
     
-    What it does:
-    1. Fetches a Pandas DataFrame of all problems.
-    2. Combines 'name', 'tags', and 'statement_summary' into one big string per problem.
-    3. Fits a TF-IDF model on these strings and transforms them into a sparse matrix.
-    4. Loads a SentenceTransformer model and encodes the same strings into dense vectors.
-    5. Saves both matrices and models to disk using joblib.
+    [TUTORIAL] WHAT IT DOES:
+    This is the core of the Machine Learning pipeline. 
+    1. It reads the SQLite text data.
+    2. It passes that text through two different math engines (TF-IDF and SentenceTransformers) to convert English into Vectors.
+    3. It saves those matrices as `.pkl` files to the hard drive.
     
-    Why it exists: Building these matrices takes time. We do it once here (offline), 
-    and save them. Our Streamlit/FastAPI app just loads the saved files instantly.
-    
-    What inputs it expects: None, gets data from database.
-    What it returns: None. Saves files to disk.
+    [TUTORIAL] WHY IT EXISTS:
+    Calculating vectors for 15,000 problems takes time (minutes or hours depending on hardware). 
+    We do NOT want to do this every time a user asks a question. By calculating the vectors *offline* 
+    and saving them directly to disk, the `chatbot` and `api` can instantly load the pre-computed 
+    results in milliseconds. Data Science is all about caching heavy computations!
     """
     print("Fetching data for indexing...")
     df = get_all_problems_as_dataframe()

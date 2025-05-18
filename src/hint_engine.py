@@ -25,14 +25,15 @@ def generate_hint(tags: str, difficulty: int = None, problem_name: str = "This p
     """
     Looks at a problem's tags and difficulty and returns a pre-written template hint.
     
-    What it does:
-    It checks if the tags contain certain keywords (like 'dp', 'graphs') and selects a 
-    random, relevant hint template that guides the user towards the right state of mind.
+    [TUTORIAL] WHAT IT DOES:
+    It acts as a lightweight logic engine. It checks if the tags contain certain keywords 
+    (like 'dp', 'graphs') and randomly selects a relevant hint template that guides the user 
+    towards the right state of mind without giving away the answer.
     
-    Why it exists: Without an expensive, slow API call to GPT-4, this is the safest and 
-    fastest way to give a student a guaranteed "non-spoiler" hint.
-    
-    Where it is used: When a user types "hint 1500A" in the API/Chatbot.
+    [TUTORIAL] WHY IT EXISTS:
+    Using an external LLM (like GPT-4) costs money and slows down the app significantly (latency).
+    For a free student project, this Heuristic Template system is the safest and fastest way 
+    to guarantee a "non-spoiler" educational nudge.
     """
     
     if not tags:

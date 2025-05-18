@@ -41,25 +41,43 @@ def initialize_database(db_path: str, schema_path: str) -> None:
     - Assumes the parent directories for db_path already exist.
     - Assumes schema.sql is safe and correct.
     """
-    # 1. Connect to SQLite. If the file doesn't exist, SQLite will create it automatically.
-    # We chose SQLite because it's lightweight, file-based, and perfect for student projects.
+    # ==========================================
+    # [TUTORIAL] 1. ESTABLISH DATABASE CONNECTION
+    # ==========================================
+    # We chose SQLite because it's lightweight, entirely file-based, and perfect for student projects.
+    # It requires no separate server running in the background. 
+    # If the file at `db_path` does not exist, SQLite will automatically create it for you here.
     print(f"Connecting to database at {db_path}...")
     connection = sqlite3.connect(db_path)
+    
+    # A 'cursor' is a temporary workspace in your computer's memory that allows you to execute SQL commands line by line.
     cursor = connection.cursor()
     
-    # 2. Open the schema definition file.
-    # We keep SQL in a separate .sql file because it's standard practice and easier to read.
+    # ==========================================
+    # [TUTORIAL] 2. READ THE SCHEMA TEMPLATE
+    # ==========================================
+    # Rather than putting massive multi-line SQL strings inside our Python code, we keep SQL in a separate `.sql` file.
+    # This is a standard industry practice because it keeps python files clean and allows SQL editors to format the schema file properly.
     print(f"Reading schema from {schema_path}...")
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema_script = f.read()
         
-    # 3. Execute the entire SQL script. 
-    # executescript() handles multiple SQL statements separated by semicolons.
+    # ==========================================
+    # [TUTORIAL] 3. EXECUTE THE SQL SCRIPT
+    # ==========================================
+    # Standard cursor.execute() only runs ONE sql statement at a time.
+    # cursor.executescript() is a special method that allows executing a massive string containing multiple semicolons.
     print("Executing schema...")
     cursor.executescript(schema_script)
     
-    # 4. Commit the changes (save them to disk) and cleanly close the connection.
+    # ==========================================
+    # [TUTORIAL] 4. COMMIT AND CLOSE
+    # ==========================================
+    # In databases, writing a command doesn't actually save it to the hard drive yet (in case you make a mistake and want to rollback).
+    # 'commit()' tells the database: "I am finished, lock these changes into the hard drive permanently."
     connection.commit()
+    
+    # We close the connection to free up system resources.
     connection.close()
     print("Database initialized successfully!")
 

@@ -25,21 +25,16 @@ def clean_and_load(raw_data: List[Dict[str, Any]]) -> None:
     """
     Iterates over the raw scraped data, applies cleaning rules, and saves to the database.
     
-    What it does:
-    1. Removes any problems missing critical fields (like contest_id or name).
-    2. Fills missing difficulties with a default value (e.g., 0) or drops them.
-       (Here we choose to keep them but assign None, which SQLite handles as NULL).
-    3. Trims whitespace and normalizes text properties.
-    4. Calls insert_problem() for each valid entry.
+    [TUTORIAL] WHAT IT DOES:
+    Whenever you take data from the internet, it is guaranteed to have errors. For example, 
+    a webpage might be missing a title, or have weird trailing spaces like `"  Math  "`.
+    This function acts as a 'filter'. It receives raw dirty dictionaries, drops the invalid ones, 
+    cleans up the text of the valid ones, and inserts them perfectly into the SQLite Database.
     
-    Why it exists: "Garbage in, garbage out". If we index messy data, our 
-    recommendations and summaries will be terrible.
-    
-    What inputs it expects: The list of dicts returned by scraper.scrape_problems().
-    
-    What it returns: None.
-    
-    Where it is used: In run_pipeline.py right after scraping.
+    [TUTORIAL] WHY IT EXISTS:
+    "Garbage in, Garbage out." If we allow broken data into our database, our mathematical AI 
+    models will break or produce terrible recommendations. By strictly filtering data here (in the ETL layer), 
+    we guarantee that our later APIs never crash from missing data.
     """
     valid_count = 0
     passed_count = 0

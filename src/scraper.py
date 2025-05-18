@@ -41,26 +41,24 @@ from src.config import MAX_PAGES_TO_SCRAPE, SLEEP_TIME_SEC, RAW_DATA_DIR
 
 def scrape_problems(pages: int = MAX_PAGES_TO_SCRAPE) -> list:
     """
-    Visits the Codeforces problemset page and extracts problem metadata.
+    Visits the Codeforces problemset page and extracts problem metadata into Python dictionaries.
     
-    What it does:
-    1. Loops through `pages` number of problemset pages.
-    2. Downloads the page using `requests`.
-    3. Finds the main table holding problems.
-    4. Extracts Contest ID, Problem Index, Name, Tags, and Difficulty.
+    [TUTORIAL] WHAT IT DOES:
+    Web scraping is the act of writing a script that pretends to be a human browsing the web.
+    We point our script at 'codeforces.com/problemset', download the raw HTML text, and slice 
+    it up to find exactly what we need (the problem names, difficulties, and topics).
     
-    Why it exists: To build our dataset autonomously.
+    [TUTORIAL] WHY IT EXISTS:
+    If we don't have data, we can't do Machine Learning or AI. Because Codeforces has over 
+    15,000 problems, it's impossible to copy-paste them by hand. This script automates Data Acquisition.
     
-    What it returns: A list of dicts. Example:
+    [TUTORIAL] OUTPUT EXAMPLE:
+    It returns a list of dictionaries like this:
     [{'contest_id': 1500, 'problem_index': 'A', 'name': 'Title', 'tags': ['math'], 'diff': 800}]
     
-    Simplifications/Assumptions:
-    - Codeforces layout might change, breaking the HTML structure.
-      If it does, this parser will raise an exception or return less data.
-    - We only extract the 'metadata' here. A more advanced version would visit 
-      each individual problem URL to extract full task text, but for our simple 
-      RAG pipeline, the titles and topics are highly indicative. To simulate real text,
-      we will use generic problem summaries or fallback text.
+    [TUTORIAL] ASSUMPTIONS & SIMPLIFICATIONS:
+    - Websites change their HTML layouts perfectly. If Codeforces changes a `<table>` to a `<div>`, this scraper will break. That is the nature of scraping.
+    - We are only scraping "metadata". To build a true massive RAG system, we would click into every single problem and scrape the 3-page problem statement too.
     """
     all_raw_problems = []
     
@@ -69,18 +67,22 @@ def scrape_problems(pages: int = MAX_PAGES_TO_SCRAPE) -> list:
     }
 
     try:
+        # We loop through multiple pages based on our configuration constant
         for page_num in range(1, pages + 1):
             url = f"https://codeforces.com/problemset/page/{page_num}"
             print(f"Scraping {url}...")
             
-            # Download the page
+            # [TUTORIAL] DOWNLOADING THE PAGE
+            # requests.get() reaches out to Codeforces. response.text contains the raw HTML code.
             response = requests.get(url, headers=headers)
-            response.raise_for_status() # If the website returns a 404 or 500 error, crash loudly.
+            response.raise_for_status() # If the website returns a 404 (Not Found) or 500 (Server Error), crash loudly.
             
-            # Parse the HTML content
+            # [TUTORIAL] PARSING THE HTML
+            # We hand the raw text to BeautifulSoup. It turns a giant string into an easily navigable structure.
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Find the main data table
+            # [TUTORIAL] FINDING THE RIGHT TABLE
+            # We inspect the webpage (F12) to see that all problems are stored in a <table class="problems">.
             table = soup.find('table', {'class': 'problems'})
             if not table:
                 print("Could not find the problems table. Layout might have changed.")
@@ -168,7 +170,11 @@ def scrape_problems(pages: int = MAX_PAGES_TO_SCRAPE) -> list:
 def get_fallback_data() -> list:
     """
     Returns a small hand-written dataset if scraping fails due to network or IP blocks.
-    Why it exists: To guarantee the project runs during a live interview even if offline.
+    
+    [TUTORIAL] WHY IT EXISTS:
+    Websites like Codeforces use Cloudflare to block scrapers. If we are running this project 
+    in an interview or without internet, we STILL need data so the pipeline doesn't crash.
+    This acts as our offline safety net.
     """
     return [
         {
